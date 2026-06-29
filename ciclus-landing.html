@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ciclus — Gestão de Serviços Recorrentes</title>
+  <meta name="description" content="Plataforma SaaS para empresas de climatização, dedetização, limpeza de caixa d'água e manutenção predial. Automatize contratos, ordens de serviço e relatórios." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50:  #e6f1fb;
+      --brand-100: #b5d4f4;
+      --brand-200: #85b7eb;
+      --brand-300: #5a9be0;
+      --brand-400: #378add;
+      --brand-500: #2671c4;
+      --brand-600: #185fa5;
+      --brand-700: #104884;
+      --brand-800: #0c447c;
+      --brand-900: #042c53;
+      --brand-950: #021a33;
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --surface-3: #f1f5f9;
+      --border: #e2e8f0;
+      --border-subtle: #f1f5f9;
+
+      --radius-sm: 8px;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / .08), 0 1px 2px -1px rgb(0 0 0 / .06);
+      --shadow:    0 4px 16px -2px rgb(0 0 0 / .10), 0 2px 6px -2px rgb(0 0 0 / .06);
+      --shadow-lg: 0 12px 40px -4px rgb(0 0 0 / .14), 0 4px 12px -4px rgb(0 0 0 / .08);
+      --shadow-brand: 0 8px 32px -4px rgb(38 113 196 / .40);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--surface);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      transition: background .25s, box-shadow .25s;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -.025em;
+      color: var(--brand-900);
+    }
+    .nav-logo .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo .logo-icon svg { width: 20px; height: 20px; color: #fff; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--brand-600); background: var(--brand-50); }
+    .nav-cta { display: flex; align-items: center; gap: 10px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: .9rem;
+      padding: 10px 22px;
+      border-radius: var(--radius-full);
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .btn-ghost { color: var(--text-secondary); }
+    .btn-ghost:hover { color: var(--brand-600); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+      color: #fff;
+      box-shadow: var(--shadow-brand);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 40px -4px rgb(38 113 196 / .55); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-outline { border: 1.5px solid var(--brand-500); color: var(--brand-600); }
+    .btn-outline:hover { background: var(--brand-50); }
+    .btn-xl { font-size: 1rem; padding: 14px 32px; }
+    .btn-lg { font-size: .95rem; padding: 12px 26px; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 148px 0 80px;
+      background: linear-gradient(170deg, #f0f7ff 0%, #ffffff 60%);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -200px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(38,113,196,.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand-50);
+      border: 1px solid var(--brand-100);
+      color: var(--brand-700);
+      font-size: .8rem;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 28px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    .hero-badge span {
+      width: 6px; height: 6px;
+      background: var(--brand-500);
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.3)} }
+    .hero-content { max-width: 720px; }
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -.04em;
+      color: var(--brand-950);
+      margin-bottom: 24px;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-300));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 580px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+    .hero-social-proof { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .hero-avatars { display: flex; }
+    .hero-avatars .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2.5px solid #fff;
+      background: linear-gradient(135deg, var(--brand-400), var(--brand-700));
+      margin-left: -10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: .7rem; font-weight: 700;
+    }
+    .hero-avatars .avatar:first-child { margin-left: 0; }
+    .hero-social-proof p { font-size: .85rem; color: var(--text-secondary); }
+    .hero-social-proof strong { color: var(--brand-700); }
+
+    .hero-visual { margin-top: 60px; }
+    .dashboard-mockup {
+      background: var(--brand-950);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 24px 80px -12px rgb(2 26 51 / .55), 0 0 0 1px rgb(255 255 255 / .08);
+    }
+    .mockup-bar {
+      background: var(--brand-900);
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+    }
+    .mockup-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .mockup-dot.r { background: #ff5f56; }
+    .mockup-dot.y { background: #febc2e; }
+    .mockup-dot.g { background: #27c93f; }
+    .mockup-url {
+      margin-left: 12px;
+      background: rgb(255 255 255 / .08);
+      border-radius: var(--radius-sm);
+      padding: 4px 16px;
+      font-size: .75rem;
+      color: rgb(255 255 255 / .5);
+      flex: 1;
+      max-width: 320px;
+    }
+    .mockup-body {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 20px;
+      min-height: 420px;
+    }
+    .mockup-sidebar {
+      background: rgb(255 255 255 / .04);
+      border-radius: var(--radius);
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .mockup-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: .78rem;
+      color: rgb(255 255 255 / .5);
+    }
+    .mockup-nav-item.active {
+      background: linear-gradient(135deg, var(--brand-600), var(--brand-800));
+      color: #fff;
+    }
+    .mockup-nav-item .icon {
+      width: 16px; height: 16px;
+      background: currentColor;
+      border-radius: 4px;
+      opacity: .7;
+      flex-shrink: 0;
+    }
+    .mockup-main { display: flex; flex-direction: column; gap: 16px; }
+    .mockup-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .mockup-kpi {
+      background: rgb(255 255 255 / .06);
+      border: 1px solid rgb(255 255 255 / .06);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+    .mockup-kpi-label { font-size: .65rem; color: rgb(255 255 255 / .4); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; }
+    .mockup-kpi-value { font-size: 1.3rem; font-weight: 800; color: #fff; letter-spacing: -.03em; }
+    .mockup-kpi-delta { font-size: .65rem; color: #27c93f; margin-top: 2px; }
+    .mockup-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; }
+    .mockup-card {
+      background: rgb(255 255 255 / .06);
+      border: 1px solid rgb(255 255 255 / .06);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .mockup-card-title { font-size: .7rem; font-weight: 700; color: rgb(255 255 255 / .5); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+    .mockup-bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+    .mockup-bar-item { flex: 1; background: linear-gradient(to top, var(--brand-600), var(--brand-400)); border-radius: 4px 4px 0 0; opacity: .8; }
+    .mockup-service-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid rgb(255 255 255 / .06); }
+    .mockup-service-item:last-child { border-bottom: none; }
+    .mockup-service-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .mockup-service-text { font-size: .72rem; color: rgb(255 255 255 / .6); flex: 1; }
+    .m-badge { font-size: .6rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+
+    /* ── NICHO ── */
+    .nicho-section {
+      padding: 56px 0;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nicho-label { text-align: center; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted); margin-bottom: 28px; }
+    .nicho-grid { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .nicho-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 8px 18px;
+      font-size: .85rem; font-weight: 500;
+      color: var(--text-secondary);
+      transition: all .2s;
+    }
+    .nicho-pill:hover { background: var(--brand-50); border-color: var(--brand-200); color: var(--brand-700); transform: translateY(-2px); }
+
+    /* ── SECTIONS ── */
+    .section { padding: 96px 0; }
+    .section-alt { background: var(--surface-2); }
+    .section-dark { background: var(--brand-950); color: #fff; }
+
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--brand-50); color: var(--brand-700);
+      border: 1px solid var(--brand-100);
+      font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+      padding: 5px 14px; border-radius: var(--radius-full); margin-bottom: 16px;
+    }
+    .section-dark .section-label { background: rgb(255 255 255 / .08); color: var(--brand-200); border-color: rgb(255 255 255 / .12); }
+    .section-title { font-size: clamp(1.9rem, 3.5vw, 2.6rem); font-weight: 800; line-height: 1.15; letter-spacing: -.04em; color: var(--brand-950); margin-bottom: 16px; }
+    .section-dark .section-title { color: #fff; }
+    .section-desc { font-size: 1.05rem; color: var(--text-secondary); max-width: 560px; line-height: 1.7; }
+    .section-dark .section-desc { color: rgb(255 255 255 / .6); }
+    .section-header { margin-bottom: 56px; }
+    .section-header.centered { text-align: center; }
+    .section-header.centered .section-desc { margin: 0 auto; }
+
+    /* ── FEATURES ── */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      transition: box-shadow .25s, transform .25s, border-color .25s;
+    }
+    .feature-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); border-color: var(--brand-200); }
+    .feature-icon { width: 52px; height: 52px; background: linear-gradient(135deg, var(--brand-50), var(--brand-100)); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 1.4rem; }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--brand-950); margin-bottom: 10px; }
+    .feature-card p { font-size: .9rem; color: var(--text-secondary); line-height: 1.65; }
+    .feature-card.featured { background: linear-gradient(135deg, var(--brand-600), var(--brand-800)); border-color: transparent; color: #fff; }
+    .feature-card.featured .feature-icon { background: rgb(255 255 255 / .15); }
+    .feature-card.featured h3 { color: #fff; }
+    .feature-card.featured p { color: rgb(255 255 255 / .75); }
+
+    /* ── STEPS ── */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; position: relative; }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(12.5% + 28px);
+      right: calc(12.5% + 28px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--brand-200), var(--brand-400));
+    }
+    .step { text-align: center; position: relative; z-index: 1; }
+    .step-number {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 1.1rem; font-weight: 800; color: #fff;
+      box-shadow: 0 4px 16px -4px rgb(38 113 196 / .5);
+      border: 4px solid #fff;
+    }
+    .step h3 { font-size: .95rem; font-weight: 700; color: var(--brand-950); margin-bottom: 8px; }
+    .step p { font-size: .85rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── SPLIT ── */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .split.reverse { direction: rtl; }
+    .split.reverse > * { direction: ltr; }
+    .split-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
+    .split-card-header { background: linear-gradient(135deg, var(--brand-600), var(--brand-800)); padding: 20px 24px; display: flex; align-items: center; gap: 12px; }
+    .split-card-header h4 { color: #fff; font-size: .9rem; font-weight: 700; }
+    .split-card-header .badge { background: rgb(255 255 255 / .2); color: #fff; font-size: .7rem; padding: 3px 10px; border-radius: var(--radius-full); margin-left: auto; }
+    .split-card-body { padding: 20px 24px; }
+
+    .os-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); }
+    .os-item:last-child { border-bottom: none; }
+    .os-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-400), var(--brand-600)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: .7rem; font-weight: 800; flex-shrink: 0; }
+    .os-info { flex: 1; min-width: 0; }
+    .os-name { font-size: .83rem; font-weight: 600; color: var(--text-primary); }
+    .os-sub { font-size: .75rem; color: var(--text-muted); margin-top: 1px; }
+    .os-status { font-size: .7rem; font-weight: 700; padding: 3px 10px; border-radius: var(--radius-full); }
+    .os-status.scheduled { background: #fef3c7; color: #b45309; }
+    .os-status.progress  { background: #dbeafe; color: #1d4ed8; }
+    .os-status.done      { background: #dcfce7; color: #166534; }
+    .os-status.confirmed { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .checklist li { display: flex; align-items: flex-start; gap: 12px; font-size: .95rem; color: var(--text-secondary); }
+    .checklist li .check { width: 22px; height: 22px; background: linear-gradient(135deg, var(--brand-500), var(--brand-700)); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .checklist li .check svg { width: 12px; height: 12px; color: #fff; }
+    .checklist li strong { color: var(--text-primary); display: block; font-size: .95rem; }
+    .checklist li span { color: var(--text-muted); font-size: .85rem; }
+
+    /* ── STATS ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid rgb(255 255 255 / .08); }
+    .stat-item { padding: 40px 32px; background: rgb(255 255 255 / .04); text-align: center; transition: background .2s; }
+    .stat-item:hover { background: rgb(255 255 255 / .08); }
+    .stat-value { font-size: 2.6rem; font-weight: 900; letter-spacing: -.05em; background: linear-gradient(135deg, #fff, var(--brand-200)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: block; margin-bottom: 6px; }
+    .stat-label { font-size: .85rem; color: rgb(255 255 255 / .5); }
+
+    /* ── PRICING ── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+    .pricing-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-xl); padding: 36px 32px; transition: box-shadow .25s, transform .25s; }
+    .pricing-card:hover:not(.pricing-card--popular) { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+    .pricing-card--popular { border-color: var(--brand-500); box-shadow: 0 0 0 4px rgb(38 113 196 / .1), var(--shadow-lg); transform: translateY(-8px); position: relative; }
+    .popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--brand-500), var(--brand-700)); color: #fff; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 5px 18px; border-radius: var(--radius-full); white-space: nowrap; }
+    .pricing-plan { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted); margin-bottom: 12px; }
+    .pricing-card--popular .pricing-plan { color: var(--brand-600); }
+    .pricing-price { display: flex; align-items: flex-end; gap: 4px; margin-bottom: 6px; }
+    .pricing-currency { font-size: 1.1rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px; }
+    .pricing-amount { font-size: 3rem; font-weight: 900; letter-spacing: -.05em; color: var(--brand-950); line-height: 1; }
+    .pricing-period { font-size: .85rem; color: var(--text-muted); margin-bottom: 8px; }
+    .pricing-desc { font-size: .85rem; color: var(--text-muted); margin-bottom: 28px; min-height: 36px; }
+    .pricing-divider { height: 1px; background: var(--border-subtle); margin: 24px 0; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+    .pricing-features li { display: flex; align-items: center; gap: 10px; font-size: .88rem; color: var(--text-secondary); }
+    .pricing-features li .pf-icon { width: 18px; height: 18px; border-radius: 50%; background: var(--brand-50); border: 1.5px solid var(--brand-200); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .pricing-features li .pf-icon svg { width: 10px; height: 10px; color: var(--brand-600); }
+    .pricing-features li.disabled { opacity: .4; }
+    .pricing-features li.disabled .pf-icon { background: var(--surface-3); border-color: var(--border); }
+    .pricing-btn { display: block; width: 100%; text-align: center; padding: 13px 24px; border-radius: var(--radius-full); font-weight: 700; font-size: .9rem; transition: all .2s; }
+    .pricing-btn--ghost { border: 1.5px solid var(--border); color: var(--text-secondary); }
+    .pricing-btn--ghost:hover { border-color: var(--brand-400); color: var(--brand-600); background: var(--brand-50); }
+    .pricing-btn--primary { background: linear-gradient(135deg, var(--brand-500), var(--brand-700)); color: #fff; box-shadow: var(--shadow-brand); }
+    .pricing-btn--primary:hover { box-shadow: 0 12px 40px -4px rgb(38 113 196 / .5); transform: translateY(-1px); }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .testimonial-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; transition: box-shadow .25s, transform .25s; }
+    .testimonial-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .stars { display: flex; gap: 3px; margin-bottom: 16px; color: #f59e0b; font-size: 1rem; }
+    .testimonial-text { font-size: .9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .author-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-400), var(--brand-700)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: .85rem; font-weight: 700; flex-shrink: 0; }
+    .author-name { font-size: .88rem; font-weight: 700; color: var(--text-primary); }
+    .author-role { font-size: .78rem; color: var(--text-muted); }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; transition: border-color .2s; }
+    .faq-item.open { border-color: var(--brand-300); }
+    .faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; font-size: .95rem; font-weight: 600; color: var(--text-primary); text-align: left; background: none; transition: color .2s; }
+    .faq-item.open .faq-question { color: var(--brand-700); }
+    .faq-chevron { width: 20px; height: 20px; color: var(--text-muted); transition: transform .3s; flex-shrink: 0; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--brand-500); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+    .faq-answer-inner { padding: 0 24px 20px; font-size: .9rem; color: var(--text-secondary); line-height: 1.7; }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 96px 0;
+      background: linear-gradient(135deg, var(--brand-900) 0%, var(--brand-950) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -200px; left: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(38,113,196,.25) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-section::after {
+      content: '';
+      position: absolute;
+      bottom: -200px; right: -200px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(90,155,224,.2) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; text-align: center; max-width: 640px; margin: 0 auto; }
+    .cta-inner h2 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; color: #fff; letter-spacing: -.04em; line-height: 1.15; margin-bottom: 20px; }
+    .cta-inner p { font-size: 1.05rem; color: rgb(255 255 255 / .65); margin-bottom: 40px; line-height: 1.7; }
+    .cta-actions { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .btn-white { background: #fff; color: var(--brand-700); font-weight: 700; }
+    .btn-white:hover { background: var(--brand-50); transform: translateY(-1px); box-shadow: 0 8px 24px rgb(0 0 0 / .2); }
+    .cta-note { margin-top: 20px; font-size: .8rem; color: rgb(255 255 255 / .4); }
+
+    /* ── FOOTER ── */
+    footer { background: var(--brand-950); border-top: 1px solid rgb(255 255 255 / .07); padding: 60px 0 32px; color: rgb(255 255 255 / .6); }
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand .nav-logo { color: #fff; margin-bottom: 16px; }
+    .footer-brand p { font-size: .85rem; line-height: 1.7; color: rgb(255 255 255 / .45); max-width: 280px; margin-bottom: 24px; }
+    .footer-social { display: flex; gap: 10px; }
+    .social-btn { width: 36px; height: 36px; background: rgb(255 255 255 / .08); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; transition: background .2s; color: rgb(255 255 255 / .6); }
+    .social-btn:hover { background: rgb(255 255 255 / .16); color: #fff; }
+    .social-btn svg { width: 16px; height: 16px; }
+    .footer-col h5 { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgb(255 255 255 / .4); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: .875rem; color: rgb(255 255 255 / .55); transition: color .2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid rgb(255 255 255 / .07); padding-top: 28px; display: flex; align-items: center; justify-content: space-between; font-size: .8rem; color: rgb(255 255 255 / .3); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps::before { display: none; }
+      .steps { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .mockup-kpis { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero { padding: 120px 0 64px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pricing-card--popular { transform: none; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .split { grid-template-columns: 1fr; gap: 40px; }
+      .split.reverse { direction: ltr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+      .mockup-body { grid-template-columns: 1fr; }
+      .mockup-sidebar { display: none; }
+      .mockup-row { grid-template-columns: 1fr; }
+      .mockup-kpis { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── ANIMATIONS ── */
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up-delay-1 { transition-delay: .1s; }
+    .fade-up-delay-2 { transition-delay: .2s; }
+    .fade-up-delay-3 { transition-delay: .3s; }
+    .fade-up-delay-4 { transition-delay: .4s; }
+
+    .tag { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: var(--radius-full); }
+    .tag-blue { background: #dbeafe; color: #1d4ed8; }
+    .tag-green { background: #dcfce7; color: #166534; }
+    .tag-orange { background: #fef3c7; color: #b45309; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 10 10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+        Ciclus
+      </a>
+      <ul class="nav-links">
+        <li><a href="#funcionalidades">Funcionalidades</a></li>
+        <li><a href="#como-funciona">Como funciona</a></li>
+        <li><a href="#planos">Planos</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="#" class="btn btn-ghost">Entrar</a>
+        <a href="#" class="btn btn-primary">Começar grátis</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span></span>
+        Plataforma SaaS para serviços recorrentes
+      </div>
+      <h1>
+        Gerencie contratos<br/>
+        e ordens de serviço<br/>
+        em um só lugar, <span class="highlight">sem esforço</span>
+      </h1>
+      <p>
+        Automatize a criação de OS, controle contratos recorrentes, gere relatórios profissionais em PDF e envie confirmações digitais — tudo com múltiplos usuários e equipes.
+      </p>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-primary btn-xl">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Começar gratuitamente
+        </a>
+        <a href="#como-funciona" class="btn btn-outline btn-xl">Ver demonstração</a>
+      </div>
+      <div class="hero-social-proof">
+        <div class="hero-avatars">
+          <div class="avatar">M</div>
+          <div class="avatar">A</div>
+          <div class="avatar">R</div>
+          <div class="avatar">J</div>
+          <div class="avatar">+</div>
+        </div>
+        <p>Mais de <strong>500 empresas</strong> já automatizaram seus serviços</p>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="dashboard-mockup">
+        <div class="mockup-bar">
+          <div class="mockup-dot r"></div>
+          <div class="mockup-dot y"></div>
+          <div class="mockup-dot g"></div>
+          <div class="mockup-url">app.ciclus.com.br/dashboard</div>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-sidebar">
+            <div class="mockup-nav-item active"><div class="icon" style="background:rgba(255,255,255,.9)"></div>Dashboard</div>
+            <div class="mockup-nav-item"><div class="icon"></div>Serviços</div>
+            <div class="mockup-nav-item"><div class="icon"></div>Clientes</div>
+            <div class="mockup-nav-item"><div class="icon"></div>Contratos</div>
+            <div class="mockup-nav-item"><div class="icon"></div>Equipe</div>
+            <div class="mockup-nav-item"><div class="icon"></div>Configurações</div>
+          </div>
+          <div class="mockup-main">
+            <div class="mockup-kpis">
+              <div class="mockup-kpi">
+                <div class="mockup-kpi-label">Clientes Ativos</div>
+                <div class="mockup-kpi-value">248</div>
+                <div class="mockup-kpi-delta">↑ 12% este mês</div>
+              </div>
+              <div class="mockup-kpi">
+                <div class="mockup-kpi-label">Contratos</div>
+                <div class="mockup-kpi-value">183</div>
+                <div class="mockup-kpi-delta">↑ 8% este mês</div>
+              </div>
+              <div class="mockup-kpi">
+                <div class="mockup-kpi-label">OS do Mês</div>
+                <div class="mockup-kpi-value">67</div>
+                <div class="mockup-kpi-delta">↑ 23% este mês</div>
+              </div>
+              <div class="mockup-kpi">
+                <div class="mockup-kpi-label">Faturamento</div>
+                <div class="mockup-kpi-value">R$34k</div>
+                <div class="mockup-kpi-delta">↑ 15% este mês</div>
+              </div>
+            </div>
+            <div class="mockup-row">
+              <div class="mockup-card">
+                <div class="mockup-card-title">Receita — Últimos 6 meses</div>
+                <div class="mockup-bar-chart">
+                  <div class="mockup-bar-item" style="height:45%"></div>
+                  <div class="mockup-bar-item" style="height:60%"></div>
+                  <div class="mockup-bar-item" style="height:50%"></div>
+                  <div class="mockup-bar-item" style="height:75%"></div>
+                  <div class="mockup-bar-item" style="height:65%"></div>
+                  <div class="mockup-bar-item" style="height:100%"></div>
+                </div>
+              </div>
+              <div class="mockup-card">
+                <div class="mockup-card-title">Próximas OS</div>
+                <div class="mockup-service-item">
+                  <div class="mockup-service-dot" style="background:#378add"></div>
+                  <div class="mockup-service-text">Cond. Jardins · Climatização</div>
+                  <span class="m-badge" style="background:rgba(55,138,221,.2);color:#85b7eb">Hoje</span>
+                </div>
+                <div class="mockup-service-item">
+                  <div class="mockup-service-dot" style="background:#27c93f"></div>
+                  <div class="mockup-service-text">Edif. Centro · Dedetização</div>
+                  <span class="m-badge" style="background:rgba(39,201,63,.2);color:#27c93f">Amanhã</span>
+                </div>
+                <div class="mockup-service-item">
+                  <div class="mockup-service-dot" style="background:#febc2e"></div>
+                  <div class="mockup-service-text">Res. Park · Caixa d'Água</div>
+                  <span class="m-badge" style="background:rgba(254,188,46,.2);color:#febc2e">6/7</span>
+                </div>
+                <div class="mockup-service-item">
+                  <div class="mockup-service-dot" style="background:#a855f7"></div>
+                  <div class="mockup-service-text">Emp. Técnica · Elevador</div>
+                  <span class="m-badge" style="background:rgba(168,85,247,.2);color:#a855f7">8/7</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NICHO -->
+<section class="nicho-section">
+  <div class="container">
+    <p class="nicho-label">Ideal para empresas de</p>
+    <div class="nicho-grid">
+      <div class="nicho-pill"><span>❄️</span> Climatização</div>
+      <div class="nicho-pill"><span>🪲</span> Dedetização</div>
+      <div class="nicho-pill"><span>💧</span> Limpeza de Caixa d'Água</div>
+      <div class="nicho-pill"><span>🏢</span> Manutenção Predial</div>
+      <div class="nicho-pill"><span>🛗</span> Elevadores</div>
+      <div class="nicho-pill"><span>🔥</span> Gás e Combustíveis</div>
+      <div class="nicho-pill"><span>🌿</span> Paisagismo</div>
+      <div class="nicho-pill"><span>🧹</span> Limpeza Profissional</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="funcionalidades">
+  <div class="container">
+    <div class="section-header centered fade-up">
+      <span class="section-label">Funcionalidades</span>
+      <h2 class="section-title">Tudo que sua empresa precisa para crescer</h2>
+      <p class="section-desc">Do agendamento à confirmação digital — um sistema completo pensado para empresas de serviços recorrentes.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-up fade-up-delay-1">
+        <div class="feature-icon">📋</div>
+        <h3>Contratos Recorrentes</h3>
+        <p>Crie contratos com frequência mensal, bimestral, trimestral, semestral ou anual. As OS são geradas automaticamente no vencimento, sem esforço manual.</p>
+      </div>
+      <div class="feature-card featured fade-up fade-up-delay-2">
+        <div class="feature-icon">⚡</div>
+        <h3>Ordens de Serviço Automáticas</h3>
+        <p>Numeração sequencial automática, ciclo de vida completo com controles por status e por perfil de acesso. Kanban visual com drag-and-drop.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-3">
+        <div class="feature-icon">📄</div>
+        <h3>Relatório PDF Profissional</h3>
+        <p>Gere relatórios A4 com logo, dados da empresa, assinatura do cliente, fotos da visita e garantia. Armazenado automaticamente na nuvem.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-1">
+        <div class="feature-icon">✅</div>
+        <h3>Confirmação Digital</h3>
+        <p>Envie link de confirmação por e-mail. O cliente confirma com nome, CPF e assinatura digital diretamente pelo celular — sem papel.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-2">
+        <div class="feature-icon">👥</div>
+        <h3>Gestão de Equipe</h3>
+        <p>Controle técnicos com disponibilidade em tempo real. Perfis de acesso por papel: Proprietário, Administrador e Técnico.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-3">
+        <div class="feature-icon">📊</div>
+        <h3>Dashboard com KPIs</h3>
+        <p>Acompanhe clientes ativos, contratos a vencer, OS do mês, faturamento e MRR. Gráfico de receita dos últimos 12 meses em tempo real.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-1">
+        <div class="feature-icon">🔔</div>
+        <h3>Alertas de Vencimento</h3>
+        <p>Receba alertas de contratos a vencer em 30 dias. Renove ou cancele com um clique e mantenha sua carteira sempre atualizada.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-2">
+        <div class="feature-icon">🛡️</div>
+        <h3>LGPD &amp; Segurança</h3>
+        <p>Mascaramento de dados sensíveis por perfil, log de auditoria completo, exportação de dados pessoais e soft delete com purge automático.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-3">
+        <div class="feature-icon">📷</div>
+        <h3>Fotos da Visita</h3>
+        <p>Registre fotos diretamente na OS via celular. As imagens ficam associadas ao serviço e aparecem no relatório PDF, documentando o trabalho.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPLIT — OS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="split">
+      <div class="split-visual fade-up">
+        <div class="split-card">
+          <div class="split-card-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <h4>Ordens de Serviço Ativas</h4>
+            <span class="badge">12 hoje</span>
+          </div>
+          <div class="split-card-body">
+            <div class="os-item">
+              <div class="os-avatar">CP</div>
+              <div class="os-info">
+                <div class="os-name">Cond. Parque das Flores</div>
+                <div class="os-sub">OS #00247 · Climatização · João Silva</div>
+              </div>
+              <span class="os-status progress">Em andamento</span>
+            </div>
+            <div class="os-item">
+              <div class="os-avatar">EM</div>
+              <div class="os-info">
+                <div class="os-name">Edif. Millennium</div>
+                <div class="os-sub">OS #00248 · Dedetização · Carlos Lima</div>
+              </div>
+              <span class="os-status scheduled">Agendado</span>
+            </div>
+            <div class="os-item">
+              <div class="os-avatar">RA</div>
+              <div class="os-info">
+                <div class="os-name">Res. Alto das Pedras</div>
+                <div class="os-sub">OS #00243 · Caixa d'Água · Ana Costa</div>
+              </div>
+              <span class="os-status done">Concluído</span>
+            </div>
+            <div class="os-item">
+              <div class="os-avatar">TC</div>
+              <div class="os-info">
+                <div class="os-name">Torres do Centro</div>
+                <div class="os-sub">OS #00241 · Elevador · Pedro Santos</div>
+              </div>
+              <span class="os-status confirmed">✓ Confirmado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-up fade-up-delay-2">
+        <span class="section-label">Gestão de Serviços</span>
+        <h2 class="section-title">Ciclo de vida completo da ordem de serviço</h2>
+        <p class="section-desc" style="margin-bottom:32px">Acompanhe cada OS desde o agendamento até a confirmação digital do cliente. Kanban visual, filtros por técnico e data, histórico auditado.</p>
+        <ul class="checklist">
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l3 3 5-5"/></svg></span>
+            <div><strong>Numeração automática</strong><span>Cada empresa tem sua própria sequência de OS, gerada atomicamente.</span></div>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l3 3 5-5"/></svg></span>
+            <div><strong>Visualização Kanban</strong><span>Arraste cards entre colunas para atualizar o status da OS em tempo real.</span></div>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l3 3 5-5"/></svg></span>
+            <div><strong>Reagendamento inteligente</strong><span>Reagende com justificativa ou cancele em lote as OS vinculadas ao contrato.</span></div>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l3 3 5-5"/></svg></span>
+            <div><strong>Relatório PDF com 1 clique</strong><span>PDF gerado com logo, dados do cliente, técnico, equipamentos e assinaturas.</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="section" id="como-funciona">
+  <div class="container">
+    <div class="section-header centered fade-up">
+      <span class="section-label">Como funciona</span>
+      <h2 class="section-title">Do cadastro à confirmação em 4 passos</h2>
+      <p class="section-desc">Comece a usar em minutos. Configure sua empresa, cadastre clientes e automatize todo o ciclo de serviço.</p>
+    </div>
+    <div class="steps">
+      <div class="step fade-up fade-up-delay-1">
+        <div class="step-number">1</div>
+        <h3>Configure sua empresa</h3>
+        <p>Cadastre os dados da sua empresa, logo, nicho de atuação e crie os perfis da sua equipe.</p>
+      </div>
+      <div class="step fade-up fade-up-delay-2">
+        <div class="step-number">2</div>
+        <h3>Cadastre seus clientes</h3>
+        <p>Importe ou cadastre clientes com CPF/CNPJ validado, endereço e equipamentos instalados.</p>
+      </div>
+      <div class="step fade-up fade-up-delay-3">
+        <div class="step-number">3</div>
+        <h3>Crie contratos recorrentes</h3>
+        <p>Defina frequência, valor e data de início. As OS são geradas automaticamente a cada ciclo.</p>
+      </div>
+      <div class="step fade-up fade-up-delay-4">
+        <div class="step-number">4</div>
+        <h3>Execute e confirme</h3>
+        <p>Técnico executa, fotografa e registra. Cliente confirma digitalmente. PDF gerado automaticamente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-header centered fade-up" style="margin-bottom:56px">
+      <span class="section-label">Resultados reais</span>
+      <h2 class="section-title">Números que falam por si</h2>
+    </div>
+    <div class="stats-grid fade-up">
+      <div class="stat-item">
+        <span class="stat-value">500+</span>
+        <span class="stat-label">empresas utilizando</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">98%</span>
+        <span class="stat-label">de uptime garantido</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">40%</span>
+        <span class="stat-label">menos tempo administrativo</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">2min</span>
+        <span class="stat-label">para emitir um relatório</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPLIT — CONTRATOS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="split reverse">
+      <div class="fade-up">
+        <span class="section-label">Contratos Recorrentes</span>
+        <h2 class="section-title">Nunca perca um vencimento de contrato</h2>
+        <p class="section-desc" style="margin-bottom:32px">Monitore toda a carteira de contratos com alertas automáticos de vencimento, histórico de OS e renovação com um clique.</p>
+        <ul class="checklist">
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l3 3 5-5"/></svg></span>
+            <div><strong>5 frequências suportadas</strong><span>Mensal, bimestral, trimestral, semestral ou anual — para cada tipo de serviço.</span></div>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l3 3 5-5"/></svg></span>
+            <div><strong>OS automática no vencimento</strong><span>Job noturno cria a próxima OS automaticamente, sem intervenção humana.</span></div>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l3 3 5-5"/></svg></span>
+            <div><strong>Alerta 30 dias antes</strong><span>Dashboard mostra contratos a vencer, evitando perdas de receita recorrente.</span></div>
+          </li>
+          <li>
+            <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l3 3 5-5"/></svg></span>
+            <div><strong>Cancelamento em cascata</strong><span>Ao cancelar o contrato, todas as OS pendentes são canceladas automaticamente.</span></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="split-visual fade-up fade-up-delay-2">
+        <div class="split-card">
+          <div class="split-card-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <h4>Contratos Ativos</h4>
+            <span class="badge">183 ativos</span>
+          </div>
+          <div class="split-card-body">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <span style="font-size:.8rem;font-weight:700;color:var(--text-primary)">Condomínio Aurora</span>
+                  <span class="tag tag-green">Ativo</span>
+                </div>
+                <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px">Climatização · Trimestral · R$ 1.800/trimestre</div>
+                <div style="background:var(--border-subtle);border-radius:99px;height:6px">
+                  <div style="background:linear-gradient(90deg,var(--brand-500),var(--brand-400));width:72%;height:100%;border-radius:99px"></div>
+                </div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-top:6px">Próxima OS: 15 de julho · 72% do período</div>
+              </div>
+              <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <span style="font-size:.8rem;font-weight:700;color:var(--text-primary)">Edif. Canção Nova</span>
+                  <span class="tag tag-orange">A vencer</span>
+                </div>
+                <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px">Dedetização · Semestral · R$ 2.400/semestre</div>
+                <div style="background:var(--border-subtle);border-radius:99px;height:6px">
+                  <div style="background:linear-gradient(90deg,#f59e0b,#fbbf24);width:93%;height:100%;border-radius:99px"></div>
+                </div>
+                <div style="font-size:.72rem;color:#b45309;margin-top:6px">⚠ Vence em 12 dias · Renovar agora</div>
+              </div>
+              <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <span style="font-size:.8rem;font-weight:700;color:var(--text-primary)">Torres Iguatemi</span>
+                  <span class="tag tag-blue">Ativo</span>
+                </div>
+                <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px">Caixa d'Água · Mensal · R$ 450/mês</div>
+                <div style="background:var(--border-subtle);border-radius:99px;height:6px">
+                  <div style="background:linear-gradient(90deg,var(--brand-500),var(--brand-400));width:34%;height:100%;border-radius:99px"></div>
+                </div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-top:6px">Próxima OS: 28 de julho · 34% do período</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="section" id="planos">
+  <div class="container">
+    <div class="section-header centered fade-up">
+      <span class="section-label">Planos e Preços</span>
+      <h2 class="section-title">Plano simples, sem surpresas</h2>
+      <p class="section-desc">Comece gratuitamente e escale conforme sua empresa cresce. Sem taxa de setup, sem contrato mínimo.</p>
+    </div>
+    <div class="pricing-grid fade-up">
+      <div class="pricing-card">
+        <div class="pricing-plan">Starter</div>
+        <div class="pricing-price">
+          <span class="pricing-currency">R$</span>
+          <span class="pricing-amount">0</span>
+        </div>
+        <div class="pricing-period">por mês · grátis para sempre</div>
+        <div class="pricing-desc">Para empresas começando a organizar seus serviços.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Até 30 clientes</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Até 20 OS por mês</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>2 usuários</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Relatório PDF básico</li>
+          <li class="disabled"><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Confirmação digital</li>
+          <li class="disabled"><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Kanban e filtros avançados</li>
+        </ul>
+        <a href="#" class="pricing-btn pricing-btn--ghost">Começar grátis</a>
+      </div>
+
+      <div class="pricing-card pricing-card--popular">
+        <div class="popular-badge">⭐ Mais escolhido</div>
+        <div class="pricing-plan">Pro</div>
+        <div class="pricing-price">
+          <span class="pricing-currency">R$</span>
+          <span class="pricing-amount">197</span>
+        </div>
+        <div class="pricing-period">por mês · cobrado mensalmente</div>
+        <div class="pricing-desc">Para empresas em crescimento com equipe de técnicos.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Clientes ilimitados</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>OS ilimitadas</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Até 10 usuários</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>PDF com logo e fotos</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Confirmação digital com assinatura</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Kanban, filtros e dashboard completo</li>
+        </ul>
+        <a href="#" class="pricing-btn pricing-btn--primary">Assinar Pro</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-plan">Enterprise</div>
+        <div class="pricing-price">
+          <span class="pricing-amount" style="font-size:2rem">Sob consulta</span>
+        </div>
+        <div class="pricing-period">para grandes operações</div>
+        <div class="pricing-desc">Multi-empresa, SLA dedicado e integrações customizadas.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Tudo do plano Pro</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Usuários ilimitados</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Integração WhatsApp (Z-API)</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Suporte dedicado via WhatsApp</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>Onboarding personalizado</li>
+          <li><span class="pf-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 5l2.5 2.5 4.5-4.5"/></svg></span>SLA e uptime garantidos em contrato</li>
+        </ul>
+        <a href="#" class="pricing-btn pricing-btn--ghost">Falar com vendas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header centered fade-up">
+      <span class="section-label">Depoimentos</span>
+      <h2 class="section-title">O que nossos clientes dizem</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-up fade-up-delay-1">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Antes eu controlava tudo por planilha e WhatsApp. Com o Ciclus, minhas OS saem automáticas todo mês. Economizo pelo menos 3 horas por semana só em burocracia."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">MF</div>
+          <div>
+            <div class="author-name">Marcos Ferreira</div>
+            <div class="author-role">ClimaTech Manutenções · Fortaleza, CE</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-up fade-up-delay-2">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"A confirmação digital mudou tudo pra nós. O cliente assina pelo celular, recebe o PDF e a gente não precisa mais imprimir nada. Profissional demais."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">AC</div>
+          <div>
+            <div class="author-name">Ana Carvalho</div>
+            <div class="author-role">Aqua Clean Serviços · São Paulo, SP</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-up fade-up-delay-3">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Tenho 4 técnicos e perdia contrato de cliente sem perceber. Agora o sistema me avisa 30 dias antes. Meu MRR cresceu 40% desde que comecei a usar."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">RO</div>
+          <div>
+            <div class="author-name">Ricardo Oliveira</div>
+            <div class="author-role">PrédioFácil · Belo Horizonte, MG</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-header centered fade-up">
+      <span class="section-label">Dúvidas frequentes</span>
+      <h2 class="section-title">Perguntas frequentes</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question">
+          Posso usar para mais de um tipo de serviço na mesma empresa?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Sim. O Ciclus é multi-nicho. Você pode cadastrar qualquer tipo de serviço — climatização, dedetização, caixa d'água, elevadores, manutenção predial — em uma mesma conta, com categorias e tipos de OS personalizáveis.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Como funciona a geração automática de ordens de serviço?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Todo dia, um job automático verifica quais contratos têm data de vencimento igual ou anterior ao dia atual. Para cada um desses contratos, uma nova OS é criada automaticamente com numeração sequencial, técnico responsável e dados do cliente — sem nenhuma ação manual.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          O cliente precisa instalar algum aplicativo para confirmar a OS?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Não. O cliente recebe um link único por e-mail. Ao abrir no navegador, visualiza os dados do serviço, assina digitalmente e confirma. Nenhum app, nenhum cadastro. O PDF é gerado automaticamente após a confirmação.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Meus dados estão seguros? O sistema é compatível com a LGPD?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Sim. Todos os dados são armazenados no Brasil. Oferecemos mascaramento de CPF/CNPJ por perfil de acesso, log de auditoria completo, exportação de dados pessoais (direito de acesso), soft delete com purge automático após 90 dias e consentimento rastreável — conforme exigido pela LGPD.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Posso cancelar a qualquer momento?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Sim. Não há fidelidade nem taxa de cancelamento. Você pode cancelar sua assinatura a qualquer momento pelas configurações da conta. Seu acesso continua até o fim do período já pago.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <h2>Comece a automatizar seus serviços hoje</h2>
+      <p>Junte-se a mais de 500 empresas que já eliminaram planilhas, perdas de contrato e relatórios manuais com o Ciclus.</p>
+      <div class="cta-actions">
+        <a href="#" class="btn btn-white btn-xl">Criar conta grátis</a>
+        <a href="#" class="btn btn-xl" style="color:rgb(255 255 255 / .75);border:1.5px solid rgb(255 255 255 / .25);">Falar com um especialista</a>
+      </div>
+      <p class="cta-note">Grátis para sempre no plano Starter · Sem cartão de crédito · Setup em 5 minutos</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 10 10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          Ciclus
+        </a>
+        <p>Plataforma SaaS para gestão de contratos e serviços recorrentes. Automatize, confirme e cresça.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Produto</h5>
+        <ul>
+          <li><a href="#">Funcionalidades</a></li>
+          <li><a href="#">Planos e preços</a></li>
+          <li><a href="#">Novidades</a></li>
+          <li><a href="#">Roadmap</a></li>
+          <li><a href="#">Integrações</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Empresa</h5>
+        <ul>
+          <li><a href="#">Sobre nós</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Parceiros</a></li>
+          <li><a href="#">Carreiras</a></li>
+          <li><a href="#">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Termos de uso</a></li>
+          <li><a href="#">Privacidade</a></li>
+          <li><a href="#">LGPD</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">Status do sistema</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Ciclus Tecnologia Ltda. Todos os direitos reservados.</span>
+      <span>Feito com ❤️ para empresas de serviços no Brasil</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(openItem => {
+        openItem.classList.remove('open');
+        openItem.querySelector('.faq-answer').style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.querySelectorAll('.stat-value').forEach(el => {
+        const text = el.textContent.trim();
+        const num = parseFloat(text.replace(/[^0-9.]/g, ''));
+        if (isNaN(num)) return;
+        const suffix = text.replace(/[0-9.]/g, '');
+        let start = 0;
+        const duration = 1600;
+        const step = 16;
+        const increment = num / (duration / step);
+        const timer = setInterval(() => {
+          start = Math.min(start + increment, num);
+          el.textContent = (Number.isInteger(num) ? Math.round(start) : start.toFixed(1)) + suffix;
+          if (start >= num) clearInterval(timer);
+        }, step);
+      });
+      statsObserver.unobserve(e.target);
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.stats-grid').forEach(el => statsObserver.observe(el));
+</script>
+</body>
+</html>
