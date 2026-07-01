@@ -54,14 +54,11 @@ export function StatsSection() {
     <section className="py-24 bg-brand-950 text-white">
       <div className="w-full max-w-[1200px] mx-auto px-6">
         <FadeUp className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 bg-white/[0.08] text-brand-200 border border-white/[0.12] text-[0.75rem] font-bold uppercase tracking-[0.08em] px-3.5 py-[5px] rounded-full mb-4">
-            Resultados reais
-          </span>
           <h2
             className="font-extrabold leading-[1.15] tracking-[-0.04em] text-white"
             style={{ fontSize: "clamp(1.9rem, 3.5vw, 2.6rem)" }}
           >
-            Números que falam por si
+            O impacto no dia a dia de quem usa
           </h2>
         </FadeUp>
 

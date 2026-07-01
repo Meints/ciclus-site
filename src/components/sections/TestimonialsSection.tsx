@@ -8,14 +8,11 @@ export function TestimonialsSection() {
     <section className="py-24 bg-slate-50">
       <div className="w-full max-w-[1200px] mx-auto px-6">
         <FadeUp className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 bg-brand-50 text-brand-700 border border-brand-100 text-[0.75rem] font-bold uppercase tracking-[0.08em] px-3.5 py-[5px] rounded-full mb-4">
-            Depoimentos
-          </span>
           <h2
             className="font-extrabold leading-[1.15] tracking-[-0.04em] text-brand-950"
             style={{ fontSize: "clamp(1.9rem, 3.5vw, 2.6rem)" }}
           >
-            O que nossos clientes dizem
+            Quem usa, recomenda
           </h2>
         </FadeUp>
 
@@ -23,7 +20,6 @@ export function TestimonialsSection() {
           {testimonials.map((t, i) => (
             <FadeUp key={t.name} delay={i * 100}>
               <div className="bg-white border border-slate-200 rounded-2xl p-7 hover:shadow-card-lg hover:-translate-y-[3px] transition-all h-full flex flex-col">
-                <div className="text-amber-400 mb-4 text-base tracking-wide">★★★★★</div>
                 <p className="text-[0.9rem] text-slate-500 leading-[1.7] mb-5 flex-1">
                   &ldquo;{t.text}&rdquo;
                 </p>

@@ -56,9 +56,7 @@ export function SplitOSSection() {
 
           {/* Text */}
           <FadeUp delay={200}>
-            <span className="inline-flex items-center gap-2 bg-brand-50 text-brand-700 border border-brand-100 text-[0.75rem] font-bold uppercase tracking-[0.08em] px-3.5 py-[5px] rounded-full mb-4">
-              Gestão de Serviços
-            </span>
+            <p className="text-brand-600 text-[0.8rem] font-bold uppercase tracking-[0.12em] mb-3">Gestão de Serviços</p>
             <h2 className="font-extrabold leading-[1.15] tracking-[-0.04em] text-brand-950 mb-4" style={{ fontSize: "clamp(1.9rem, 3.5vw, 2.6rem)" }}>
               Ciclo de vida completo da ordem de serviço
             </h2>

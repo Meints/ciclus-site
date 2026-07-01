@@ -42,11 +42,6 @@ export function HeroSection() {
       <div className="w-full max-w-[1200px] mx-auto px-6">
         {/* Hero content */}
         <div className="max-w-[720px]">
-          <div className="inline-flex items-center gap-2 bg-brand-50 border border-brand-100 text-brand-700 text-[0.8rem] font-semibold px-3.5 py-[5px] rounded-full mb-7 uppercase tracking-[0.02em]">
-            <span className="w-1.5 h-1.5 bg-brand-500 rounded-full inline-block animate-pulse-dot" />
-            Plataforma SaaS para serviços recorrentes
-          </div>
-
           <h1
             className="font-black leading-[1.1] tracking-[-0.04em] text-brand-950 mb-6"
             style={{ fontSize: "clamp(2.4rem, 5vw, 3.6rem)" }}
